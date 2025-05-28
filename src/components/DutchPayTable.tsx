@@ -117,6 +117,13 @@ export function DutchPayTable({
     return Math.abs(sharesSum - expense.amount) < 0.1; // Allow small floating point differences
   };
 
+  const getSharesSumDifference = (expense: Expense) => {
+    const sharesSum = participants.reduce((sum, participant) => {
+      return sum + (expense.shares[participant.id] ?? calculateShare(expense.amount, participants.length));
+    }, 0);
+    return sharesSum - expense.amount;
+  };
+
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalShare = calculateShare(totalAmount, participants.length);
 
@@ -420,6 +427,9 @@ export function DutchPayTable({
                           {!checkSharesSum(expense) && (
                             <TooltipContent>
                               <p>참여자 금액의 합계가 지출 금액과 다릅니다</p>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                차이: {formatAmount(getSharesSumDifference(expense))}
+                              </p>
                             </TooltipContent>
                           )}
                         </Tooltip>
