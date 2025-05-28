@@ -46,6 +46,9 @@ export function DutchPayTable({
     return Math.round((amount / participantCount) * 10) / 10;
   };
 
+  const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const totalShare = calculateShare(totalAmount, participants.length);
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -80,18 +83,30 @@ export function DutchPayTable({
               </TableCell>
             </TableRow>
           ) : (
-            expenses.map((expense) => (
-              <TableRow key={expense.id}>
-                <TableCell>{expense.description}</TableCell>
-                <TableCell>{expense.amount.toLocaleString()}원</TableCell>
+            <>
+              {expenses.map((expense) => (
+                <TableRow key={expense.id}>
+                  <TableCell>{expense.description}</TableCell>
+                  <TableCell>{expense.amount.toLocaleString()}원</TableCell>
+                  {participants.map((participant) => (
+                    <TableCell key={participant.id}>
+                      {calculateShare(expense.amount, participants.length).toLocaleString()}원
+                    </TableCell>
+                  ))}
+                  <TableCell />
+                </TableRow>
+              ))}
+              <TableRow className="font-bold">
+                <TableCell>합계</TableCell>
+                <TableCell>{totalAmount.toLocaleString()}원</TableCell>
                 {participants.map((participant) => (
                   <TableCell key={participant.id}>
-                    {calculateShare(expense.amount, participants.length).toLocaleString()}원
+                    {totalShare.toLocaleString()}원
                   </TableCell>
                 ))}
                 <TableCell />
               </TableRow>
-            ))
+            </>
           )}
           <TableRow>
             <TableCell colSpan={participants.length + 3}>
