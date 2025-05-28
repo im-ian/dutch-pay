@@ -147,13 +147,24 @@ export function DutchPayTable({
     const otherParticipants = participants.filter(p => p.id !== editingShare.participantId);
     
     if (otherParticipants.length > 0) {
-      const sharePerParticipant = hideDecimal 
-        ? Math.round(remainingAmount / otherParticipants.length)
-        : Math.round((remainingAmount / otherParticipants.length) * 10) / 10;
+      // Find participants with manually set amounts
+      const participantsWithManualAmount = otherParticipants.filter(p => expense.shares[p.id] !== undefined);
+      const participantsWithAutoAmount = otherParticipants.filter(p => expense.shares[p.id] === undefined);
 
-      otherParticipants.forEach(participant => {
-        newShares[participant.id] = sharePerParticipant;
-      });
+      // Calculate total of manually set amounts
+      const totalManualAmount = participantsWithManualAmount.reduce((sum, p) => sum + (expense.shares[p.id] ?? 0), 0);
+
+      // Distribute remaining amount among participants with auto amounts
+      if (participantsWithAutoAmount.length > 0) {
+        const remainingForAuto = remainingAmount - totalManualAmount;
+        const sharePerParticipant = hideDecimal 
+          ? Math.round(remainingForAuto / participantsWithAutoAmount.length)
+          : Math.round((remainingForAuto / participantsWithAutoAmount.length) * 10) / 10;
+
+        participantsWithAutoAmount.forEach(participant => {
+          newShares[participant.id] = sharePerParticipant;
+        });
+      }
     }
 
     const updatedExpenses = expenses.map(e => 
