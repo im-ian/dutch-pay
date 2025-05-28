@@ -417,7 +417,7 @@ export function DutchPayTable({
             {expenses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={participants.length + (isSharedLink ? 2 : 3)} className="h-24 text-center text-muted-foreground">
-                  지출 내역이나 정산 참가자를 추가해보세요.
+                  왼쪽 위의 버튼을 눌러 지출 내역이나 정산 참가자를 추가해보세요.
                 </TableCell>
               </TableRow>
             ) : (
