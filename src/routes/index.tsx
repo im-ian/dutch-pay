@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { DutchPayTable } from '../components/DutchPayTable'
-import { AddParticipantDialog } from '../components/AddParticipantDialog'
-import { AddExpenseDialog } from '../components/AddExpenseDialog'
+import { AddParticipantDialog } from '../components/dialogs/AddParticipantDialog'
+import { AddExpenseDialog } from '../components/dialogs/AddExpenseDialog'
 import { v4 as uuidv4 } from 'uuid'
 import { toast } from 'sonner'
 

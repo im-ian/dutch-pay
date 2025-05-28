@@ -8,9 +8,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "./ui/alert-dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+} from "../ui/alert-dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 interface AddExpenseDialogProps {
   open: boolean;
