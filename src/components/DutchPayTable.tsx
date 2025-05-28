@@ -67,8 +67,8 @@ export function DutchPayTable({
           <TableRow>
             <TableCell colSpan={participants.length + 3}>
               <Button 
-                variant="outline" 
-                className="w-full"
+                variant="default" 
+                className="w-full bg-black hover:bg-black/90"
                 onClick={onAddExpense}
               >
                 정산 내용 추가

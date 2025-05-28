@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { DutchPayTable } from '../components/DutchPayTable'
 import { AddParticipantDialog } from '../components/AddParticipantDialog'
+import { AddExpenseDialog } from '../components/AddExpenseDialog'
 import { v4 as uuidv4 } from 'uuid'
 
 interface Participant {
@@ -24,6 +25,7 @@ function App() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isAddExpenseDialogOpen, setIsAddExpenseDialogOpen] = useState(false);
 
   const handleAddParticipant = (name: string) => {
     const newParticipant: Participant = {
@@ -33,9 +35,14 @@ function App() {
     setParticipants([...participants, newParticipant]);
   };
 
-  const handleAddExpense = () => {
-    // TODO: Implement expense addition dialog
-    console.log("Add expense clicked");
+  const handleAddExpense = (description: string, amount: number) => {
+    const newExpense: Expense = {
+      id: uuidv4(),
+      description,
+      amount,
+      shares: {},
+    };
+    setExpenses([...expenses, newExpense]);
   };
 
   return (
@@ -44,12 +51,17 @@ function App() {
       <DutchPayTable
         participants={participants}
         onAddParticipant={() => setIsAddDialogOpen(true)}
-        onAddExpense={handleAddExpense}
+        onAddExpense={() => setIsAddExpenseDialogOpen(true)}
       />
       <AddParticipantDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onAdd={handleAddParticipant}
+      />
+      <AddExpenseDialog
+        open={isAddExpenseDialogOpen}
+        onOpenChange={setIsAddExpenseDialogOpen}
+        onAdd={handleAddExpense}
       />
     </div>
   )
