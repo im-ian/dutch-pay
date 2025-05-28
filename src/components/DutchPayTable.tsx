@@ -97,13 +97,12 @@ export function DutchPayTable({
                   {participant.name}
                 </TableHead>
               ))}
-              <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {expenses.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={participants.length + 3} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={participants.length + 2} className="h-24 text-center text-muted-foreground">
                   아직 지출 내역이 없습니다
                 </TableCell>
               </TableRow>
@@ -121,7 +120,6 @@ export function DutchPayTable({
                         {formatAmount(calculateShare(expense.amount, participants.length))}
                       </TableCell>
                     ))}
-                    <TableCell />
                   </TableRow>
                 ))}
                 <TableRow className="font-bold">
@@ -135,12 +133,11 @@ export function DutchPayTable({
                       {formatAmount(totalShare)}
                     </TableCell>
                   ))}
-                  <TableCell />
                 </TableRow>
               </>
             )}
             <TableRow>
-              <TableCell colSpan={participants.length + 3}>
+              <TableCell colSpan={participants.length + 2}>
                 <Button 
                   variant="default" 
                   className="w-full bg-black hover:bg-black/90"
