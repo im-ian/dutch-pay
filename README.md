@@ -1,3 +1,78 @@
+# Dutch Pay
+
+더치페이 계산을 쉽고 빠르게 할 수 있는 웹 애플리케이션입니다.
+
+## 🚀 Demo
+
+[Live Demo](https://dutch-pay-mu.vercel.app/)
+
+## ✨ Features
+
+- 간편한 더치페이 계산
+- 참여자별 금액 입력 및 수정
+- 금액 차이에 대한 시각적 피드백
+- 반응형 디자인으로 모바일/데스크톱 지원
+- 다크 모드 지원
+
+## 🛠️ Tech Stack
+
+- **Framework**: React 19
+- **Routing**: TanStack Router
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI
+- **Build Tool**: Vite
+- **Package Manager**: pnpm
+- **Language**: TypeScript
+
+## 🏃‍♂️ Getting Started
+
+### Prerequisites
+
+- Node.js 20 or higher
+- pnpm 10.11.0 or higher
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/im-ian/dutch-pay.git
+cd dutch-pay
+```
+
+2. Install dependencies
+```bash
+pnpm install
+```
+
+3. Start development server
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:3000`
+
+### Build
+
+```bash
+pnpm build
+```
+
+### Preview Production Build
+
+```bash
+pnpm serve
+```
+
+## 🧪 Testing
+
+```bash
+pnpm test
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 Welcome to your new TanStack app! 
 
 # Getting Started
