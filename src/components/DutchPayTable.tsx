@@ -428,7 +428,10 @@ export function DutchPayTable({
                             <TooltipContent>
                               <p>참여자 금액의 합계가 지출 금액과 다릅니다</p>
                               <p className="text-sm text-muted-foreground mt-1">
-                                차이: {formatAmount(getSharesSumDifference(expense))}
+                                {getSharesSumDifference(expense) > 0 
+                                  ? `${formatAmount(getSharesSumDifference(expense))}의 금액이 초과되었습니다`
+                                  : `${formatAmount(Math.abs(getSharesSumDifference(expense)))}의 금액을 더 할당해야 합니다`
+                                }
                               </p>
                             </TooltipContent>
                           )}
