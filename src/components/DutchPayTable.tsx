@@ -43,7 +43,7 @@ export function DutchPayTable({
 }: DutchPayTableProps) {
   const calculateShare = (amount: number, participantCount: number) => {
     if (participantCount === 0) return 0;
-    return Math.floor(amount / participantCount);
+    return Math.round((amount / participantCount) * 10) / 10;
   };
 
   return (
