@@ -196,10 +196,6 @@ export function DutchPayTable({
     const expense = expenses.find(e => e.id === expenseId);
     if (!expense) return;
 
-    const sharePerParticipant = hideDecimal 
-      ? Math.round(expense.amount / participants.length)
-      : Math.round((expense.amount / participants.length) * 10) / 10;
-
     // Clear all manual share amounts by setting shares to an empty object
     const updatedExpenses = expenses.map(e => 
       e.id === expenseId 
