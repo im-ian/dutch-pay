@@ -125,7 +125,14 @@ export function DutchPayTable({
   };
 
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-  const totalShare = calculateShare(totalAmount, participants.length);
+  
+  // Calculate total share for each participant by summing their actual shares across all expenses
+  const calculateParticipantTotal = (participantId: string) => {
+    return expenses.reduce((sum, expense) => {
+      const participantShare = expense.shares[participantId] ?? calculateShare(expense.amount, participants.length);
+      return sum + participantShare;
+    }, 0);
+  };
 
   const handleExport = () => {
     const data = {
@@ -537,7 +544,7 @@ export function DutchPayTable({
                       key={participant.id}
                       className={`${index !== participants.length - 1 ? 'border-r' : ''} text-right`}
                     >
-                      {formatAmount(totalShare)}
+                      {formatAmount(calculateParticipantTotal(participant.id))}
                     </TableCell>
                   ))}
                 </TableRow>
