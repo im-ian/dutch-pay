@@ -24,15 +24,21 @@ interface Participant {
 interface DutchPayTableProps {
   participants: Participant[];
   onAddParticipant: () => void;
+  onAddExpense: () => void;
 }
 
-export function DutchPayTable({ participants, onAddParticipant }: DutchPayTableProps) {
+export function DutchPayTable({ 
+  participants, 
+  onAddParticipant,
+  onAddExpense,
+}: DutchPayTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">내역</TableHead>
+            <TableHead className="w-[200px]">정산내역</TableHead>
+            <TableHead className="w-[150px]">금액</TableHead>
             {participants.map((participant) => (
               <TableHead key={participant.id}>{participant.name}</TableHead>
             ))}
@@ -54,8 +60,19 @@ export function DutchPayTable({ participants, onAddParticipant }: DutchPayTableP
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell colSpan={participants.length + 2} className="h-24 text-center text-muted-foreground">
+            <TableCell colSpan={participants.length + 3} className="h-24 text-center text-muted-foreground">
               아직 지출 내역이 없습니다
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={participants.length + 3}>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={onAddExpense}
+              >
+                정산 내용 추가
+              </Button>
             </TableCell>
           </TableRow>
         </TableBody>
