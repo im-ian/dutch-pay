@@ -414,13 +414,15 @@ export function DutchPayTable({
                           </div>
                         ) : (
                           <div className="flex items-center justify-end gap-2">
-                            <span>{formatAmount(calculateShare(expense.amount, participants.length))}</span>
+                            <span className={expense.shares[participant.id] !== undefined ? "text-blue-600" : ""}>
+                              {formatAmount(expense.shares[participant.id] ?? calculateShare(expense.amount, participants.length))}
+                            </span>
                             {!isSharedLink && (
                               <Button
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 text-gray-500 hover:text-gray-700"
-                                onClick={() => handleShareEdit(expense.id, participant.id, calculateShare(expense.amount, participants.length))}
+                                onClick={() => handleShareEdit(expense.id, participant.id, expense.shares[participant.id] ?? calculateShare(expense.amount, participants.length))}
                               >
                                 <Pencil className="h-4 w-4" />
                               </Button>
