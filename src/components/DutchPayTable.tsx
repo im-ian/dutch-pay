@@ -54,10 +54,15 @@ export function DutchPayTable({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 hover:bg-gray-100">
-            <TableHead className="w-[200px] font-semibold">정산내역</TableHead>
-            <TableHead className="w-[150px] font-semibold">금액</TableHead>
-            {participants.map((participant) => (
-              <TableHead key={participant.id} className="font-semibold">{participant.name}</TableHead>
+            <TableHead className="w-[200px] font-semibold border-r">정산내역</TableHead>
+            <TableHead className="w-[150px] font-semibold border-r">금액</TableHead>
+            {participants.map((participant, index) => (
+              <TableHead 
+                key={participant.id} 
+                className={`font-semibold ${index !== participants.length - 1 ? 'border-r' : ''}`}
+              >
+                {participant.name}
+              </TableHead>
             ))}
             <TableHead className="w-[50px]">
               <DropdownMenu>
@@ -86,10 +91,13 @@ export function DutchPayTable({
             <>
               {expenses.map((expense) => (
                 <TableRow key={expense.id}>
-                  <TableCell>{expense.description}</TableCell>
-                  <TableCell>{expense.amount.toLocaleString()}원</TableCell>
-                  {participants.map((participant) => (
-                    <TableCell key={participant.id}>
+                  <TableCell className="border-r">{expense.description}</TableCell>
+                  <TableCell className="border-r">{expense.amount.toLocaleString()}원</TableCell>
+                  {participants.map((participant, index) => (
+                    <TableCell 
+                      key={participant.id}
+                      className={index !== participants.length - 1 ? 'border-r' : ''}
+                    >
                       {calculateShare(expense.amount, participants.length).toLocaleString()}원
                     </TableCell>
                   ))}
@@ -97,10 +105,13 @@ export function DutchPayTable({
                 </TableRow>
               ))}
               <TableRow className="font-bold">
-                <TableCell>합계</TableCell>
-                <TableCell>{totalAmount.toLocaleString()}원</TableCell>
-                {participants.map((participant) => (
-                  <TableCell key={participant.id}>
+                <TableCell className="border-r">합계</TableCell>
+                <TableCell className="border-r">{totalAmount.toLocaleString()}원</TableCell>
+                {participants.map((participant, index) => (
+                  <TableCell 
+                    key={participant.id}
+                    className={index !== participants.length - 1 ? 'border-r' : ''}
+                  >
                     {totalShare.toLocaleString()}원
                   </TableCell>
                 ))}
