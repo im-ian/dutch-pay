@@ -56,6 +56,10 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    document.title = `${title} - 더치페이 계산기`;
+  }, [title]);
+
   const handleAddParticipant = (name: string) => {
     const newParticipant: Participant = {
       id: uuidv4(),
