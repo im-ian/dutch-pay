@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { Copy } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,13 +23,15 @@ export function ExportDialog({
   onOpenChange,
   exportData,
 }: ExportDialogProps) {
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(exportData);
-      toast.success("클립보드에 복사되었습니다");
-    } catch (err) {
-      toast.error("복사에 실패했습니다");
-    }
+  const handleCopy = () => {
+    navigator.clipboard.writeText(exportData);
+    toast.success("정산 내역이 클립보드에 복사되었습니다");
+  };
+
+  const handleCopyShareLink = () => {
+    const shareLink = `${window.location.origin}${window.location.pathname}?data=${exportData}`;
+    navigator.clipboard.writeText(shareLink);
+    toast.success("공유 링크가 클립보드에 복사되었습니다");
   };
 
   return (
@@ -41,26 +43,36 @@ export function ExportDialog({
             <div className="mt-4 space-y-4">
               <div className="relative">
                 <textarea
-                  readOnly
                   value={exportData}
+                  readOnly
                   className="w-full h-32 p-2 border rounded-md font-mono text-sm"
                 />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2"
-                  onClick={handleCopy}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                위 텍스트를 복사하여 나중에 정산 내역을 불러올 수 있습니다.
+                정산 내역을 다른 기기에서 불러오려면 위 데이터를 복사하거나 공유 링크를 사용하세요.
               </p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onClick={handleCopy}
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              데이터 복사
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onClick={handleCopyShareLink}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              공유 링크 복사
+            </Button>
+          </div>
           <AlertDialogCancel>닫기</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
