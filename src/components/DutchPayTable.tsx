@@ -41,6 +41,11 @@ export function DutchPayTable({
   onAddParticipant,
   onAddExpense,
 }: DutchPayTableProps) {
+  const calculateShare = (amount: number, participantCount: number) => {
+    if (participantCount === 0) return 0;
+    return Math.floor(amount / participantCount);
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -81,7 +86,7 @@ export function DutchPayTable({
                 <TableCell>{expense.amount.toLocaleString()}원</TableCell>
                 {participants.map((participant) => (
                   <TableCell key={participant.id}>
-                    {expense.shares[participant.id]?.toLocaleString() ?? "-"}원
+                    {calculateShare(expense.amount, participants.length).toLocaleString()}원
                   </TableCell>
                 ))}
                 <TableCell />
