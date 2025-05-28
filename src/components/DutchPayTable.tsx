@@ -276,7 +276,7 @@ export function DutchPayTable({
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-100 hover:bg-gray-100">
-              <TableHead className="w-[50px] font-semibold border-r"></TableHead>
+              {!isSharedLink && <TableHead className="w-[50px] font-semibold border-r"></TableHead>}
               <TableHead className="w-[200px] font-semibold border-r">정산내역</TableHead>
               <TableHead className="w-[150px] font-semibold border-r text-right">금액</TableHead>
               {participants.map((participant, index) => (
@@ -323,7 +323,7 @@ export function DutchPayTable({
           <TableBody>
             {expenses.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={participants.length + 3} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={participants.length + (isSharedLink ? 2 : 3)} className="h-24 text-center text-muted-foreground">
                   지출 내역이나 정산 참가자를 추가해보세요.
                 </TableCell>
               </TableRow>
@@ -331,8 +331,8 @@ export function DutchPayTable({
               <>
                 {expenses.map((expense) => (
                   <TableRow key={expense.id}>
-                    <TableCell className="border-r">
-                      {!isSharedLink && (
+                    {!isSharedLink && (
+                      <TableCell className="border-r">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -341,8 +341,8 @@ export function DutchPayTable({
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
-                      )}
-                    </TableCell>
+                      </TableCell>
+                    )}
                     <TableCell className="border-r">{expense.description}</TableCell>
                     <TableCell className="border-r text-right">{formatAmount(expense.amount)}</TableCell>
                     {participants.map((participant, index) => (
@@ -356,7 +356,7 @@ export function DutchPayTable({
                   </TableRow>
                 ))}
                 <TableRow className="font-bold">
-                  <TableCell className="border-r"></TableCell>
+                  {!isSharedLink && <TableCell className="border-r"></TableCell>}
                   <TableCell className="border-r">합계</TableCell>
                   <TableCell className="border-r text-right">{formatAmount(totalAmount)}</TableCell>
                   {participants.map((participant, index) => (
