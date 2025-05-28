@@ -200,14 +200,10 @@ export function DutchPayTable({
       ? Math.round(expense.amount / participants.length)
       : Math.round((expense.amount / participants.length) * 10) / 10;
 
-    const newShares = participants.reduce((shares, participant) => {
-      shares[participant.id] = sharePerParticipant;
-      return shares;
-    }, {} as { [participantId: string]: number });
-
+    // Clear all manual share amounts by setting shares to an empty object
     const updatedExpenses = expenses.map(e => 
       e.id === expenseId 
-        ? { ...e, shares: newShares }
+        ? { ...e, shares: {} }
         : e
     );
 
