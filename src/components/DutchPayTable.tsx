@@ -276,7 +276,7 @@ export function DutchPayTable({
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                      className="h-8 w-8 bg-blue-100 hover:bg-blue-200 text-blue-700"
                       onClick={onAddExpense}
                     >
                       <Banknote className="h-4 w-4" />
@@ -294,7 +294,7 @@ export function DutchPayTable({
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                      className="h-8 w-8 bg-green-100 hover:bg-green-200 text-green-700"
                       onClick={onAddParticipant}
                     >
                       <UserPlus className="h-4 w-4" />
