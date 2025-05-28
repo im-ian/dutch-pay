@@ -45,6 +45,10 @@ function App() {
     setExpenses([...expenses, newExpense]);
   };
 
+  const handleDeleteExpense = (id: string) => {
+    setExpenses(expenses.filter(expense => expense.id !== id));
+  };
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">더치페이 계산기</h1>
@@ -53,6 +57,7 @@ function App() {
         expenses={expenses}
         onAddParticipant={() => setIsAddDialogOpen(true)}
         onAddExpense={() => setIsAddExpenseDialogOpen(true)}
+        onDeleteExpense={handleDeleteExpense}
       />
       <AddParticipantDialog
         open={isAddDialogOpen}
