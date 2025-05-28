@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Settings } from "lucide-react";
+import { Settings, Plus } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
@@ -59,7 +59,15 @@ export function DutchPayTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end space-x-2">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+          onClick={onAddParticipant}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
@@ -71,9 +79,6 @@ export function DutchPayTable({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onAddParticipant}>
-              참가자 추가
-            </DropdownMenuItem>
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <div className="flex items-center space-x-2">
                 <Checkbox 
