@@ -59,13 +59,29 @@ export function DutchPayTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <Checkbox 
-          id="hide-won" 
-          checked={hideWon}
-          onCheckedChange={(checked) => setHideWon(checked as boolean)}
-        />
-        <Label htmlFor="hide-won">원 표시 제거</Label>
+      <div className="flex justify-end">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onAddParticipant}>
+              참가자 추가
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="hide-won" 
+                  checked={hideWon}
+                  onCheckedChange={(checked) => setHideWon(checked as boolean)}
+                />
+                <Label htmlFor="hide-won">원 표시 제거</Label>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -81,20 +97,7 @@ export function DutchPayTable({
                   {participant.name}
                 </TableHead>
               ))}
-              <TableHead className="w-[50px]">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={onAddParticipant}>
-                      참가자 추가
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableHead>
+              <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
