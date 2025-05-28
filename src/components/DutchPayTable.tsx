@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil, Download, Upload } from "lucide-react";
+import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil, Download, Upload, Check, X } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import {
@@ -28,6 +28,7 @@ import { DeleteParticipantDialog } from "./dialogs/DeleteParticipantDialog";
 import { EditParticipantDialog } from "./dialogs/EditParticipantDialog";
 import { ExportDialog } from "./dialogs/ExportDialog";
 import { ImportDialog } from "./dialogs/ImportDialog";
+import { Input } from "./ui/input";
 
 interface Participant {
   id: string;
@@ -57,6 +58,7 @@ interface DutchPayTableProps {
   onUpdateParticipant: (id: string, newName: string) => void;
   onImportData: (data: { title: string; participants: Participant[]; expenses: Expense[] }) => void;
   isSharedLink: boolean;
+  onExpensesChange: (expenses: Expense[]) => void;
 }
 
 export function DutchPayTable({ 
@@ -75,6 +77,7 @@ export function DutchPayTable({
   onUpdateParticipant,
   onImportData,
   isSharedLink,
+  onExpensesChange,
 }: DutchPayTableProps) {
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
   const [participantToEdit, setParticipantToEdit] = useState<Participant | null>(null);
@@ -82,6 +85,8 @@ export function DutchPayTable({
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [exportData, setExportData] = useState("");
+  const [editingShare, setEditingShare] = useState<{ expenseId: string; participantId: string } | null>(null);
+  const [shareAmount, setShareAmount] = useState("");
 
   const handleDeleteClick = (id: string) => {
     setExpenseToDelete(id);
@@ -118,6 +123,34 @@ export function DutchPayTable({
     const base64 = btoa(encodeURIComponent(jsonString));
     setExportData(base64);
     setShowExportDialog(true);
+  };
+
+  const handleShareEdit = (expenseId: string, participantId: string, currentAmount: number) => {
+    setEditingShare({ expenseId, participantId });
+    setShareAmount(currentAmount.toString());
+  };
+
+  const handleShareSave = () => {
+    if (!editingShare) return;
+
+    const numericAmount = parseFloat(shareAmount);
+    if (isNaN(numericAmount) || numericAmount < 0) return;
+
+    const expense = expenses.find(e => e.id === editingShare.expenseId);
+    if (!expense) return;
+
+    const newShares = { ...expense.shares };
+    newShares[editingShare.participantId] = numericAmount;
+
+    const updatedExpenses = expenses.map(e => 
+      e.id === editingShare.expenseId 
+        ? { ...e, shares: newShares }
+        : e
+    );
+
+    onExpensesChange(updatedExpenses);
+    setEditingShare(null);
+    setShareAmount("");
   };
 
   return (
@@ -350,7 +383,50 @@ export function DutchPayTable({
                         key={participant.id}
                         className={`${index !== participants.length - 1 ? 'border-r' : ''} text-right`}
                       >
-                        {formatAmount(calculateShare(expense.amount, participants.length))}
+                        {editingShare?.expenseId === expense.id && editingShare?.participantId === participant.id ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <Input
+                              type="number"
+                              value={shareAmount}
+                              onChange={(e) => setShareAmount(e.target.value)}
+                              className="w-24"
+                              autoFocus
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={handleShareSave}
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => {
+                                setEditingShare(null);
+                                setShareAmount("");
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-end gap-2">
+                            <span>{formatAmount(calculateShare(expense.amount, participants.length))}</span>
+                            {!isSharedLink && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-500 hover:text-gray-700"
+                                onClick={() => handleShareEdit(expense.id, participant.id, calculateShare(expense.amount, participants.length))}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>

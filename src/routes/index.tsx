@@ -117,6 +117,7 @@ function App() {
         onUpdateParticipant={handleUpdateParticipant}
         onImportData={handleImportData}
         isSharedLink={isSharedLink}
+        onExpensesChange={setExpenses}
       />
       <AddParticipantDialog
         open={isAddDialogOpen}

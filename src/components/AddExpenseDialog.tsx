@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
@@ -24,64 +26,56 @@ export function AddExpenseDialog({
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const numericAmount = parseFloat(amount.replace(/,/g, ""));
-    if (description && !isNaN(numericAmount)) {
-      onAdd(description, numericAmount);
-      setDescription("");
-      setAmount("");
-      onOpenChange(false);
-    }
-  };
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, "");
-    if (value === "") {
-      setAmount("");
+  const handleSubmit = () => {
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
       return;
     }
-    const numericValue = parseInt(value, 10);
-    setAmount(numericValue.toLocaleString());
+
+    onAdd(description, numericAmount);
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setDescription("");
+    setAmount("");
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>정산 내용 추가</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="description">내역</Label>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="정산 내역을 입력하세요"
-              />
+    <AlertDialog open={open} onOpenChange={handleClose}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>정산 내용 추가</AlertDialogTitle>
+          <AlertDialogDescription>
+            <div className="mt-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="description">내용</Label>
+                <Input
+                  id="description"
+                  value={description}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+                  placeholder="정산 내용을 입력하세요"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="amount">금액</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  value={amount}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
+                  placeholder="금액을 입력하세요"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="amount">금액</Label>
-              <Input
-                id="amount"
-                value={amount}
-                onChange={handleAmountChange}
-                placeholder="금액을 입력하세요"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              취소
-            </Button>
-            <Button type="submit" disabled={!description || !amount}>
-              추가
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={handleClose}>취소</AlertDialogCancel>
+          <AlertDialogAction onClick={handleSubmit}>추가</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 } 
