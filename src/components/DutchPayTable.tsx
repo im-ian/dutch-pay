@@ -142,6 +142,20 @@ export function DutchPayTable({
     const newShares = { ...expense.shares };
     newShares[editingShare.participantId] = numericAmount;
 
+    // Calculate remaining amount and distribute it among other participants
+    const remainingAmount = expense.amount - numericAmount;
+    const otherParticipants = participants.filter(p => p.id !== editingShare.participantId);
+    
+    if (otherParticipants.length > 0) {
+      const sharePerParticipant = hideDecimal 
+        ? Math.round(remainingAmount / otherParticipants.length)
+        : Math.round((remainingAmount / otherParticipants.length) * 10) / 10;
+
+      otherParticipants.forEach(participant => {
+        newShares[participant.id] = sharePerParticipant;
+      });
+    }
+
     const updatedExpenses = expenses.map(e => 
       e.id === editingShare.expenseId 
         ? { ...e, shares: newShares }
