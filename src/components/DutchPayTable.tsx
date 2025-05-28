@@ -62,7 +62,11 @@ export function DutchPayTable({
       <div className="flex justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            >
               <Settings className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
