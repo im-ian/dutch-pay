@@ -153,17 +153,6 @@ export function DutchPayTable({
                 </TableRow>
               </>
             )}
-            <TableRow>
-              <TableCell colSpan={participants.length + 2}>
-                <Button 
-                  variant="default" 
-                  className="w-full bg-black hover:bg-black/90"
-                  onClick={onAddExpense}
-                >
-                  정산 내용 추가
-                </Button>
-              </TableCell>
-            </TableRow>
           </TableBody>
         </Table>
       </div>
