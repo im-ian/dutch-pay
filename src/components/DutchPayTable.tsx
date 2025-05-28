@@ -110,6 +110,13 @@ export function DutchPayTable({
     return `${formattedAmount.toLocaleString()}${hideWon ? '' : '원'}`;
   };
 
+  const checkSharesSum = (expense: Expense) => {
+    const sharesSum = participants.reduce((sum, participant) => {
+      return sum + (expense.shares[participant.id] ?? calculateShare(expense.amount, participants.length));
+    }, 0);
+    return Math.abs(sharesSum - expense.amount) < 0.1; // Allow small floating point differences
+  };
+
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalShare = calculateShare(totalAmount, participants.length);
 
@@ -402,7 +409,22 @@ export function DutchPayTable({
                       </TableCell>
                     )}
                     <TableCell className="border-r">{expense.description}</TableCell>
-                    <TableCell className="border-r text-right">{formatAmount(expense.amount)}</TableCell>
+                    <TableCell className="border-r text-right">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className={!checkSharesSum(expense) ? "text-red-600" : ""}>
+                              {formatAmount(expense.amount)}
+                            </span>
+                          </TooltipTrigger>
+                          {!checkSharesSum(expense) && (
+                            <TooltipContent>
+                              <p>참여자 금액의 합계가 지출 금액과 다릅니다</p>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
                     {participants.map((participant, index) => (
                       <TableCell 
                         key={participant.id}
