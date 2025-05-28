@@ -205,7 +205,7 @@ export function DutchPayTable({
             {expenses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={participants.length + 3} className="h-24 text-center text-muted-foreground">
-                  아직 지출 내역이 없습니다
+                  지출 내역이나 정산 참가자를 추가해보세요.
                 </TableCell>
               </TableRow>
             ) : (
