@@ -21,7 +21,6 @@
 - **Styling**: Tailwind CSS
 - **UI Components**: Radix UI
 - **Build Tool**: Vite
-- **Package Manager**: pnpm
 - **Language**: TypeScript
 
 ## 🏃‍♂️ Getting Started
@@ -29,7 +28,6 @@
 ### Prerequisites
 
 - Node.js 20 or higher
-- pnpm 10.11.0 or higher
 
 ### Installation
 
@@ -41,12 +39,12 @@ cd dutch-pay
 
 2. Install dependencies
 ```bash
-pnpm install
+npm install
 ```
 
 3. Start development server
 ```bash
-pnpm dev
+npm run dev
 ```
 
 The application will be available at `http://localhost:3000`
@@ -54,19 +52,19 @@ The application will be available at `http://localhost:3000`
 ### Build
 
 ```bash
-pnpm build
+npm run build
 ```
 
 ### Preview Production Build
 
 ```bash
-pnpm serve
+npm run serve
 ```
 
 ## 🧪 Testing
 
 ```bash
-pnpm test
+npm test
 ```
 
 ## 📝 License
