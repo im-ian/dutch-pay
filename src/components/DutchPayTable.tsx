@@ -23,6 +23,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 
 interface Participant {
   id: string;
@@ -52,6 +62,22 @@ export function DutchPayTable({
   onDeleteExpense,
 }: DutchPayTableProps) {
   const [hideWon, setHideWon] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setExpenseToDelete(id);
+  };
+
+  const handleConfirmDelete = () => {
+    if (expenseToDelete) {
+      onDeleteExpense(expenseToDelete);
+      setExpenseToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setExpenseToDelete(null);
+  };
 
   const calculateShare = (amount: number, participantCount: number) => {
     if (participantCount === 0) return 0;
@@ -67,6 +93,27 @@ export function DutchPayTable({
 
   return (
     <div className="space-y-4">
+      <AlertDialog open={expenseToDelete !== null} onOpenChange={handleCancelDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>정산 내역 삭제</AlertDialogTitle>
+            <AlertDialogDescription>
+              정말로 이 정산 내역을 삭제하시겠습니까?
+              이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="flex justify-end space-x-2">
         <TooltipProvider>
           <Tooltip>
@@ -170,7 +217,7 @@ export function DutchPayTable({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
-                        onClick={() => onDeleteExpense(expense.id)}
+                        onClick={() => handleDeleteClick(expense.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
