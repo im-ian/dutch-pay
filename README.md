@@ -2,6 +2,10 @@
 
 더치페이 계산을 쉽고 빠르게 할 수 있는 웹 애플리케이션입니다.
 
+## 📹 Preview
+
+https://github.com/user-attachments/assets/41d12ac9-9b4d-40eb-8982-928d1a288978
+
 ## 🚀 Demo
 
 [Live Demo](https://dutch-pay-mu.vercel.app/)
