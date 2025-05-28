@@ -25,6 +25,7 @@ function App() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [hideWon, setHideWon] = useState(false);
+  const [hideDecimal, setHideDecimal] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAddExpenseDialogOpen, setIsAddExpenseDialogOpen] = useState(false);
 
@@ -72,7 +73,9 @@ function App() {
         participants={participants}
         expenses={expenses}
         hideWon={hideWon}
+        hideDecimal={hideDecimal}
         onHideWonChange={setHideWon}
+        onHideDecimalChange={setHideDecimal}
         onAddParticipant={() => setIsAddDialogOpen(true)}
         onAddExpense={() => setIsAddExpenseDialogOpen(true)}
         onDeleteExpense={handleDeleteExpense}

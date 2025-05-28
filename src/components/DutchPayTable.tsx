@@ -45,7 +45,9 @@ interface DutchPayTableProps {
   participants: Participant[];
   expenses: Expense[];
   hideWon: boolean;
+  hideDecimal: boolean;
   onHideWonChange: (hide: boolean) => void;
+  onHideDecimalChange: (hide: boolean) => void;
   onAddParticipant: () => void;
   onAddExpense: () => void;
   onDeleteExpense: (id: string) => void;
@@ -58,7 +60,9 @@ export function DutchPayTable({
   participants, 
   expenses,
   hideWon,
+  hideDecimal,
   onHideWonChange,
+  onHideDecimalChange,
   onAddParticipant,
   onAddExpense,
   onDeleteExpense,
@@ -86,11 +90,13 @@ export function DutchPayTable({
 
   const calculateShare = (amount: number, participantCount: number) => {
     if (participantCount === 0) return 0;
-    return Math.round((amount / participantCount) * 10) / 10;
+    const share = amount / participantCount;
+    return hideDecimal ? Math.round(share) : Math.round(share * 10) / 10;
   };
 
   const formatAmount = (amount: number) => {
-    return `${amount.toLocaleString()}${hideWon ? '' : '원'}`;
+    const formattedAmount = hideDecimal ? Math.round(amount) : amount;
+    return `${formattedAmount.toLocaleString()}${hideWon ? '' : '원'}`;
   };
 
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
@@ -201,6 +207,16 @@ export function DutchPayTable({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="hide-decimal" 
+                        checked={hideDecimal}
+                        onCheckedChange={(checked) => onHideDecimalChange(checked as boolean)}
+                      />
+                      <Label htmlFor="hide-decimal">소숫점 제거</Label>
+                    </div>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     <div className="flex items-center space-x-2">
                       <Checkbox 
