@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Settings, UserPlus } from "lucide-react";
+import { Settings, UserPlus, Banknote } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
@@ -60,6 +60,14 @@ export function DutchPayTable({
   return (
     <div className="space-y-4">
       <div className="flex justify-end space-x-2">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+          onClick={onAddExpense}
+        >
+          <Banknote className="h-4 w-4" />
+        </Button>
         <Button 
           variant="ghost" 
           size="icon"
