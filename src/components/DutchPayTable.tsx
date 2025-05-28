@@ -32,7 +32,7 @@ export function DutchPayTable({ participants, onAddParticipant }: DutchPayTableP
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Description</TableHead>
+            <TableHead className="w-[200px]">내역</TableHead>
             {participants.map((participant) => (
               <TableHead key={participant.id}>{participant.name}</TableHead>
             ))}
@@ -45,7 +45,7 @@ export function DutchPayTable({ participants, onAddParticipant }: DutchPayTableP
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={onAddParticipant}>
-                    Add Participant
+                    참가자 추가
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -55,7 +55,7 @@ export function DutchPayTable({ participants, onAddParticipant }: DutchPayTableP
         <TableBody>
           <TableRow>
             <TableCell colSpan={participants.length + 2} className="h-24 text-center text-muted-foreground">
-              No expenses yet
+              아직 지출 내역이 없습니다
             </TableCell>
           </TableRow>
         </TableBody>
