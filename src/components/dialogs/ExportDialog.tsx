@@ -55,9 +55,10 @@ export function ExportDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-          <div className="flex gap-2 w-full sm:w-auto">
+          <AlertDialogCancel className="order-1 sm:order-1">닫기</AlertDialogCancel>
+          <div className="flex gap-2 w-full sm:w-auto order-2 sm:order-2">
             <Button
-              variant="outline"
+              variant="secondary"
               className="flex-1 sm:flex-none"
               onClick={handleCopy}
             >
@@ -65,7 +66,7 @@ export function ExportDialog({
               데이터 복사
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               className="flex-1 sm:flex-none"
               onClick={handleCopyShareLink}
             >
@@ -73,7 +74,6 @@ export function ExportDialog({
               공유 링크 복사
             </Button>
           </div>
-          <AlertDialogCancel>닫기</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
