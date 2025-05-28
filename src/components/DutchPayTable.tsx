@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Settings, UserPlus, Banknote, Trash2 } from "lucide-react";
+import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import {
@@ -52,6 +52,8 @@ interface DutchPayTableProps {
   onAddParticipant: () => void;
   onAddExpense: () => void;
   onDeleteExpense: (id: string) => void;
+  onDeleteParticipant: (id: string) => void;
+  onUpdateParticipant: (id: string, newName: string) => void;
 }
 
 export function DutchPayTable({ 
@@ -60,9 +62,14 @@ export function DutchPayTable({
   onAddParticipant,
   onAddExpense,
   onDeleteExpense,
+  onDeleteParticipant,
+  onUpdateParticipant,
 }: DutchPayTableProps) {
   const [hideWon, setHideWon] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
+  const [participantToEdit, setParticipantToEdit] = useState<Participant | null>(null);
+  const [participantToDelete, setParticipantToDelete] = useState<Participant | null>(null);
+  const [newParticipantName, setNewParticipantName] = useState("");
 
   const handleDeleteClick = (id: string) => {
     setExpenseToDelete(id);
@@ -91,6 +98,21 @@ export function DutchPayTable({
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalShare = calculateShare(totalAmount, participants.length);
 
+  const handleUpdateParticipant = () => {
+    if (participantToEdit && newParticipantName.trim()) {
+      onUpdateParticipant(participantToEdit.id, newParticipantName.trim());
+      setParticipantToEdit(null);
+      setNewParticipantName("");
+    }
+  };
+
+  const handleConfirmParticipantDelete = () => {
+    if (participantToDelete) {
+      onDeleteParticipant(participantToDelete.id);
+      setParticipantToDelete(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <AlertDialog open={expenseToDelete !== null} onOpenChange={handleCancelDelete}>
@@ -109,6 +131,51 @@ export function DutchPayTable({
             >
               삭제
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={participantToDelete !== null} onOpenChange={() => setParticipantToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>참가자 제거</AlertDialogTitle>
+            <AlertDialogDescription>
+              정말로 이 참가자를 제거하시겠습니까?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmParticipantDelete}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              제거
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={participantToEdit !== null} onOpenChange={() => setParticipantToEdit(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>참가자 이름 변경</AlertDialogTitle>
+            <AlertDialogDescription>
+              <input
+                type="text"
+                value={newParticipantName}
+                onChange={(e) => setNewParticipantName(e.target.value)}
+                className="w-full mt-2 px-3 py-2 border rounded-md"
+                placeholder="새 이름을 입력하세요"
+                autoFocus
+              />
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setParticipantToEdit(null);
+              setNewParticipantName("");
+            }}>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUpdateParticipant}>변경</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -195,7 +262,37 @@ export function DutchPayTable({
                   key={participant.id} 
                   className={`font-semibold ${index !== participants.length - 1 ? 'border-r' : ''} text-right`}
                 >
-                  {participant.name}
+                  <div className="flex items-center justify-end gap-2">
+                    {participant.name}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                        >
+                          <MoreHorizontal className="h-3 w-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setParticipantToEdit(participant);
+                            setNewParticipantName(participant.name);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          이름 변경
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setParticipantToDelete(participant)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          참가자 제거
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </TableHead>
               ))}
             </TableRow>
