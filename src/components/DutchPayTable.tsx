@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil, Copy, Download, Upload } from "lucide-react";
+import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil, Download, Upload } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import {
@@ -23,17 +23,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "./ui/alert-dialog";
-import { toast } from "sonner";
+import { DeleteExpenseDialog } from "./dialogs/DeleteExpenseDialog";
+import { DeleteParticipantDialog } from "./dialogs/DeleteParticipantDialog";
+import { EditParticipantDialog } from "./dialogs/EditParticipantDialog";
+import { ExportDialog } from "./dialogs/ExportDialog";
+import { ImportDialog } from "./dialogs/ImportDialog";
 
 interface Participant {
   id: string;
@@ -57,7 +51,7 @@ interface DutchPayTableProps {
   onDeleteExpense: (id: string) => void;
   onDeleteParticipant: (id: string) => void;
   onUpdateParticipant: (id: string, newName: string) => void;
-  onImportData: (data: { participants: Participant[]; expenses: Expense[]; hideWon: boolean }) => void;
+  onImportData: (data: { participants: Participant[]; expenses: Expense[] }) => void;
 }
 
 export function DutchPayTable({ 
@@ -75,11 +69,9 @@ export function DutchPayTable({
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
   const [participantToEdit, setParticipantToEdit] = useState<Participant | null>(null);
   const [participantToDelete, setParticipantToDelete] = useState<Participant | null>(null);
-  const [newParticipantName, setNewParticipantName] = useState("");
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [exportData, setExportData] = useState("");
-  const [importData, setImportData] = useState("");
 
   const handleDeleteClick = (id: string) => {
     setExpenseToDelete(id);
@@ -90,10 +82,6 @@ export function DutchPayTable({
       onDeleteExpense(expenseToDelete);
       setExpenseToDelete(null);
     }
-  };
-
-  const handleCancelDelete = () => {
-    setExpenseToDelete(null);
   };
 
   const calculateShare = (amount: number, participantCount: number) => {
@@ -108,21 +96,6 @@ export function DutchPayTable({
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const totalShare = calculateShare(totalAmount, participants.length);
 
-  const handleUpdateParticipant = () => {
-    if (participantToEdit && newParticipantName.trim()) {
-      onUpdateParticipant(participantToEdit.id, newParticipantName.trim());
-      setParticipantToEdit(null);
-      setNewParticipantName("");
-    }
-  };
-
-  const handleConfirmParticipantDelete = () => {
-    if (participantToDelete) {
-      onDeleteParticipant(participantToDelete.id);
-      setParticipantToDelete(null);
-    }
-  };
-
   const handleExport = () => {
     const data = {
       participants,
@@ -134,165 +107,48 @@ export function DutchPayTable({
     setShowExportDialog(true);
   };
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(exportData);
-      toast.success("클립보드에 복사되었습니다");
-    } catch (err) {
-      toast.error("복사에 실패했습니다");
-    }
-  };
-
-  const handleImport = () => {
-    try {
-      const jsonString = decodeURIComponent(atob(importData));
-      const data = JSON.parse(jsonString);
-      
-      // Validate data structure
-      if (!data.participants || !data.expenses) {
-        throw new Error("Invalid data format");
-      }
-
-      onImportData(data);
-      setShowImportDialog(false);
-      setImportData("");
-      toast.success("정산 내역을 불러왔습니다");
-    } catch (err) {
-      toast.error("올바르지 않은 데이터입니다");
-    }
-  };
-
   return (
     <div className="space-y-4">
-      <AlertDialog open={expenseToDelete !== null} onOpenChange={handleCancelDelete}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>정산 내역 삭제</AlertDialogTitle>
-            <AlertDialogDescription>
-              정말로 이 정산 내역을 삭제하시겠습니까?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              삭제
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteExpenseDialog
+        open={expenseToDelete !== null}
+        onOpenChange={(open) => !open && setExpenseToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
 
-      <AlertDialog open={participantToDelete !== null} onOpenChange={() => setParticipantToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>참가자 제거</AlertDialogTitle>
-            <AlertDialogDescription>
-              정말로 이 참가자를 제거하시겠습니까?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmParticipantDelete}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              제거
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteParticipantDialog
+        open={participantToDelete !== null}
+        onOpenChange={(open) => !open && setParticipantToDelete(null)}
+        onConfirm={() => {
+          if (participantToDelete) {
+            onDeleteParticipant(participantToDelete.id);
+            setParticipantToDelete(null);
+          }
+        }}
+      />
 
-      <AlertDialog open={participantToEdit !== null} onOpenChange={() => setParticipantToEdit(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>참가자 이름 변경</AlertDialogTitle>
-            <AlertDialogDescription>
-              <input
-                type="text"
-                value={newParticipantName}
-                onChange={(e) => setNewParticipantName(e.target.value)}
-                className="w-full mt-2 px-3 py-2 border rounded-md"
-                placeholder="새 이름을 입력하세요"
-                autoFocus
-              />
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setParticipantToEdit(null);
-              setNewParticipantName("");
-            }}>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleUpdateParticipant}>변경</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <EditParticipantDialog
+        open={participantToEdit !== null}
+        onOpenChange={(open) => !open && setParticipantToEdit(null)}
+        onConfirm={(newName) => {
+          if (participantToEdit) {
+            onUpdateParticipant(participantToEdit.id, newName);
+            setParticipantToEdit(null);
+          }
+        }}
+        initialName={participantToEdit?.name ?? ""}
+      />
 
-      {/* Export Dialog */}
-      <AlertDialog open={showExportDialog} onOpenChange={setShowExportDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>정산 내역 내보내기</AlertDialogTitle>
-            <AlertDialogDescription>
-              <div className="mt-4 space-y-4">
-                <div className="relative">
-                  <textarea
-                    readOnly
-                    value={exportData}
-                    className="w-full h-32 p-2 border rounded-md font-mono text-sm"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 right-2"
-                    onClick={handleCopy}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  위 텍스트를 복사하여 나중에 정산 내역을 불러올 수 있습니다.
-                </p>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>닫기</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ExportDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        exportData={exportData}
+      />
 
-      {/* Import Dialog */}
-      <AlertDialog open={showImportDialog} onOpenChange={setShowImportDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>정산 내역 불러오기</AlertDialogTitle>
-            <AlertDialogDescription>
-              <div className="mt-4 space-y-4">
-                <div className="relative">
-                  <textarea
-                    value={importData}
-                    onChange={(e) => setImportData(e.target.value)}
-                    placeholder="내보낸 정산 내역 데이터를 붙여넣으세요"
-                    className="w-full h-32 p-2 border rounded-md font-mono text-sm"
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  내보낸 정산 내역 데이터를 붙여넣어 불러올 수 있습니다.
-                </p>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setShowImportDialog(false);
-              setImportData("");
-            }}>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleImport}>불러오기</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ImportDialog
+        open={showImportDialog}
+        onOpenChange={setShowImportDialog}
+        onImport={onImportData}
+      />
 
       <div className="flex justify-end space-x-2">
         <TooltipProvider>
@@ -400,7 +256,6 @@ export function DutchPayTable({
                         <DropdownMenuItem
                           onClick={() => {
                             setParticipantToEdit(participant);
-                            setNewParticipantName(participant.name);
                           }}
                         >
                           <Pencil className="h-4 w-4 mr-2" />
