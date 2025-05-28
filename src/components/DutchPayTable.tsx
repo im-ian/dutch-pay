@@ -21,14 +21,23 @@ interface Participant {
   name: string;
 }
 
+interface Expense {
+  id: string;
+  description: string;
+  amount: number;
+  shares: { [participantId: string]: number };
+}
+
 interface DutchPayTableProps {
   participants: Participant[];
+  expenses: Expense[];
   onAddParticipant: () => void;
   onAddExpense: () => void;
 }
 
 export function DutchPayTable({ 
   participants, 
+  expenses,
   onAddParticipant,
   onAddExpense,
 }: DutchPayTableProps) {
@@ -59,11 +68,26 @@ export function DutchPayTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell colSpan={participants.length + 3} className="h-24 text-center text-muted-foreground">
-              아직 지출 내역이 없습니다
-            </TableCell>
-          </TableRow>
+          {expenses.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={participants.length + 3} className="h-24 text-center text-muted-foreground">
+                아직 지출 내역이 없습니다
+              </TableCell>
+            </TableRow>
+          ) : (
+            expenses.map((expense) => (
+              <TableRow key={expense.id}>
+                <TableCell>{expense.description}</TableCell>
+                <TableCell>{expense.amount.toLocaleString()}원</TableCell>
+                {participants.map((participant) => (
+                  <TableCell key={participant.id}>
+                    {expense.shares[participant.id]?.toLocaleString() ?? "-"}원
+                  </TableCell>
+                ))}
+                <TableCell />
+              </TableRow>
+            ))
+          )}
           <TableRow>
             <TableCell colSpan={participants.length + 3}>
               <Button 

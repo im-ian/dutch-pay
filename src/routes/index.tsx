@@ -50,6 +50,7 @@ function App() {
       <h1 className="text-3xl font-bold mb-8">더치페이 계산기</h1>
       <DutchPayTable
         participants={participants}
+        expenses={expenses}
         onAddParticipant={() => setIsAddDialogOpen(true)}
         onAddExpense={() => setIsAddExpenseDialogOpen(true)}
       />
