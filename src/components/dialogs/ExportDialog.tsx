@@ -8,7 +8,6 @@ import {
   AlertDialogCancel,
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { Copy, Download } from "lucide-react";
 import { toast } from "sonner";
 
