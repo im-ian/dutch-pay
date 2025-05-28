@@ -192,6 +192,28 @@ export function DutchPayTable({
     setShareAmount("");
   };
 
+  const handleRedistributeEqually = (expenseId: string) => {
+    const expense = expenses.find(e => e.id === expenseId);
+    if (!expense) return;
+
+    const sharePerParticipant = hideDecimal 
+      ? Math.round(expense.amount / participants.length)
+      : Math.round((expense.amount / participants.length) * 10) / 10;
+
+    const newShares = participants.reduce((shares, participant) => {
+      shares[participant.id] = sharePerParticipant;
+      return shares;
+    }, {} as { [participantId: string]: number });
+
+    const updatedExpenses = expenses.map(e => 
+      e.id === expenseId 
+        ? { ...e, shares: newShares }
+        : e
+    );
+
+    onExpensesChange(updatedExpenses);
+  };
+
   return (
     <div className="space-y-4">
       <DeleteExpenseDialog
@@ -417,26 +439,47 @@ export function DutchPayTable({
                     )}
                     <TableCell className="border-r">{expense.description}</TableCell>
                     <TableCell className="border-r text-right">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className={!checkSharesSum(expense) ? "text-red-600" : ""}>
-                              {formatAmount(expense.amount)}
-                            </span>
-                          </TooltipTrigger>
-                          {!checkSharesSum(expense) && (
-                            <TooltipContent>
-                              <p>참여자 금액의 합계가 지출 금액과 다릅니다</p>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {getSharesSumDifference(expense) > 0 
-                                  ? `${formatAmount(getSharesSumDifference(expense))}의 금액이 초과되었습니다`
-                                  : `${formatAmount(Math.abs(getSharesSumDifference(expense)))}의 금액을 더 할당해야 합니다`
-                                }
-                              </p>
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="flex items-center justify-end gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className={!checkSharesSum(expense) ? "text-red-600" : ""}>
+                                {formatAmount(expense.amount)}
+                              </span>
+                            </TooltipTrigger>
+                            {!checkSharesSum(expense) && (
+                              <TooltipContent>
+                                <p>참여자 금액의 합계가 지출 금액과 다릅니다</p>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  {getSharesSumDifference(expense) > 0 
+                                    ? `${formatAmount(getSharesSumDifference(expense))}의 금액이 초과되었습니다`
+                                    : `${formatAmount(Math.abs(getSharesSumDifference(expense)))}의 금액을 더 할당해야 합니다`
+                                  }
+                                </p>
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TooltipProvider>
+                        {!isSharedLink && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-500 hover:text-gray-700"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleRedistributeEqually(expense.id)}>
+                                <Pencil className="h-4 w-4 mr-2" />
+                                금액 균등 분배
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
                     </TableCell>
                     {participants.map((participant, index) => (
                       <TableCell 
