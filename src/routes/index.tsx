@@ -24,6 +24,7 @@ export const Route = createFileRoute('/')({
 function App() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [hideWon, setHideWon] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAddExpenseDialogOpen, setIsAddExpenseDialogOpen] = useState(false);
 
@@ -59,17 +60,25 @@ function App() {
     ));
   };
 
+  const handleImportData = (data: { participants: Participant[]; expenses: Expense[] }) => {
+    setParticipants(data.participants);
+    setExpenses(data.expenses);
+  };
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">더치페이 계산기</h1>
       <DutchPayTable
         participants={participants}
         expenses={expenses}
+        hideWon={hideWon}
+        onHideWonChange={setHideWon}
         onAddParticipant={() => setIsAddDialogOpen(true)}
         onAddExpense={() => setIsAddExpenseDialogOpen(true)}
         onDeleteExpense={handleDeleteExpense}
         onDeleteParticipant={handleDeleteParticipant}
         onUpdateParticipant={handleUpdateParticipant}
+        onImportData={handleImportData}
       />
       <AddParticipantDialog
         open={isAddDialogOpen}

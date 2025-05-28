@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil } from "lucide-react";
+import { Settings, UserPlus, Banknote, Trash2, MoreHorizontal, Pencil, Copy, Download, Upload } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import {
@@ -33,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Participant {
   id: string;
@@ -49,27 +50,36 @@ interface Expense {
 interface DutchPayTableProps {
   participants: Participant[];
   expenses: Expense[];
+  hideWon: boolean;
+  onHideWonChange: (hide: boolean) => void;
   onAddParticipant: () => void;
   onAddExpense: () => void;
   onDeleteExpense: (id: string) => void;
   onDeleteParticipant: (id: string) => void;
   onUpdateParticipant: (id: string, newName: string) => void;
+  onImportData: (data: { participants: Participant[]; expenses: Expense[]; hideWon: boolean }) => void;
 }
 
 export function DutchPayTable({ 
   participants, 
   expenses,
+  hideWon,
+  onHideWonChange,
   onAddParticipant,
   onAddExpense,
   onDeleteExpense,
   onDeleteParticipant,
   onUpdateParticipant,
+  onImportData,
 }: DutchPayTableProps) {
-  const [hideWon, setHideWon] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
   const [participantToEdit, setParticipantToEdit] = useState<Participant | null>(null);
   const [participantToDelete, setParticipantToDelete] = useState<Participant | null>(null);
   const [newParticipantName, setNewParticipantName] = useState("");
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [exportData, setExportData] = useState("");
+  const [importData, setImportData] = useState("");
 
   const handleDeleteClick = (id: string) => {
     setExpenseToDelete(id);
@@ -110,6 +120,45 @@ export function DutchPayTable({
     if (participantToDelete) {
       onDeleteParticipant(participantToDelete.id);
       setParticipantToDelete(null);
+    }
+  };
+
+  const handleExport = () => {
+    const data = {
+      participants,
+      expenses,
+    };
+    const jsonString = JSON.stringify(data);
+    const base64 = btoa(encodeURIComponent(jsonString));
+    setExportData(base64);
+    setShowExportDialog(true);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(exportData);
+      toast.success("클립보드에 복사되었습니다");
+    } catch (err) {
+      toast.error("복사에 실패했습니다");
+    }
+  };
+
+  const handleImport = () => {
+    try {
+      const jsonString = decodeURIComponent(atob(importData));
+      const data = JSON.parse(jsonString);
+      
+      // Validate data structure
+      if (!data.participants || !data.expenses) {
+        throw new Error("Invalid data format");
+      }
+
+      onImportData(data);
+      setShowImportDialog(false);
+      setImportData("");
+      toast.success("정산 내역을 불러왔습니다");
+    } catch (err) {
+      toast.error("올바르지 않은 데이터입니다");
     }
   };
 
@@ -180,6 +229,71 @@ export function DutchPayTable({
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Export Dialog */}
+      <AlertDialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>정산 내역 내보내기</AlertDialogTitle>
+            <AlertDialogDescription>
+              <div className="mt-4 space-y-4">
+                <div className="relative">
+                  <textarea
+                    readOnly
+                    value={exportData}
+                    className="w-full h-32 p-2 border rounded-md font-mono text-sm"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={handleCopy}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  위 텍스트를 복사하여 나중에 정산 내역을 불러올 수 있습니다.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>닫기</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Import Dialog */}
+      <AlertDialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>정산 내역 불러오기</AlertDialogTitle>
+            <AlertDialogDescription>
+              <div className="mt-4 space-y-4">
+                <div className="relative">
+                  <textarea
+                    value={importData}
+                    onChange={(e) => setImportData(e.target.value)}
+                    placeholder="내보낸 정산 내역 데이터를 붙여넣으세요"
+                    className="w-full h-32 p-2 border rounded-md font-mono text-sm"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  내보낸 정산 내역 데이터를 붙여넣어 불러올 수 있습니다.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowImportDialog(false);
+              setImportData("");
+            }}>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={handleImport}>불러오기</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="flex justify-end space-x-2">
         <TooltipProvider>
           <Tooltip>
@@ -236,10 +350,18 @@ export function DutchPayTable({
                       <Checkbox 
                         id="hide-won" 
                         checked={hideWon}
-                        onCheckedChange={(checked) => setHideWon(checked as boolean)}
+                        onCheckedChange={(checked) => onHideWonChange(checked as boolean)}
                       />
                       <Label htmlFor="hide-won">원 표시 제거</Label>
                     </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExport}>
+                    <Download className="h-4 w-4 mr-2" />
+                    정산 내역 내보내기
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowImportDialog(true)}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    정산 내역 불러오기
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
