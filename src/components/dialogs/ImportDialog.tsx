@@ -26,7 +26,7 @@ interface Expense {
 interface ImportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onImport: (data: { participants: Participant[]; expenses: Expense[] }) => void;
+  onImport: (data: { title: string; participants: Participant[]; expenses: Expense[] }) => void;
 }
 
 export function ImportDialog({
@@ -42,7 +42,7 @@ export function ImportDialog({
       const data = JSON.parse(jsonString);
       
       // Validate data structure
-      if (!data.participants || !data.expenses) {
+      if (!data.title || !data.participants || !data.expenses) {
         throw new Error("Invalid data format");
       }
 

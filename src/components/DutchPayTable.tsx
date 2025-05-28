@@ -42,6 +42,8 @@ interface Expense {
 }
 
 interface DutchPayTableProps {
+  title: string;
+  onTitleChange: (title: string) => void;
   participants: Participant[];
   expenses: Expense[];
   hideWon: boolean;
@@ -53,10 +55,12 @@ interface DutchPayTableProps {
   onDeleteExpense: (id: string) => void;
   onDeleteParticipant: (id: string) => void;
   onUpdateParticipant: (id: string, newName: string) => void;
-  onImportData: (data: { participants: Participant[]; expenses: Expense[] }) => void;
+  onImportData: (data: { title: string; participants: Participant[]; expenses: Expense[] }) => void;
 }
 
 export function DutchPayTable({ 
+  title,
+  onTitleChange,
   participants, 
   expenses,
   hideWon,
@@ -104,6 +108,7 @@ export function DutchPayTable({
 
   const handleExport = () => {
     const data = {
+      title,
       participants,
       expenses,
     };
@@ -156,94 +161,106 @@ export function DutchPayTable({
         onImport={onImportData}
       />
 
-      <div className="flex justify-end space-x-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
-                onClick={onAddExpense}
-              >
-                <Banknote className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>정산 내용 추가</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            className="text-xl font-semibold bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none px-1 py-0.5"
+            placeholder="정산 제목을 입력하세요"
+          />
+        </div>
+        <div className="flex space-x-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                  onClick={onAddExpense}
+                >
+                  <Banknote className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>정산 내용 추가</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
-                onClick={onAddParticipant}
-              >
-                <UserPlus className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>참가자 추가</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                  onClick={onAddParticipant}
+                >
+                  <UserPlus className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>참가자 추가</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="hide-decimal" 
-                        checked={hideDecimal}
-                        onCheckedChange={(checked) => onHideDecimalChange(checked as boolean)}
-                      />
-                      <Label htmlFor="hide-decimal">소숫점 제거</Label>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="hide-won" 
-                        checked={hideWon}
-                        onCheckedChange={(checked) => onHideWonChange(checked as boolean)}
-                      />
-                      <Label htmlFor="hide-won">원 표시 제거</Label>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleExport}>
-                    <Download className="h-4 w-4 mr-2" />
-                    정산 내역 내보내기
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowImportDialog(true)}>
-                    <Upload className="h-4 w-4 mr-2" />
-                    정산 내역 불러오기
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>설정</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="hide-decimal" 
+                          checked={hideDecimal}
+                          onCheckedChange={(checked) => onHideDecimalChange(checked as boolean)}
+                        />
+                        <Label htmlFor="hide-decimal">소숫점 제거</Label>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="hide-won" 
+                          checked={hideWon}
+                          onCheckedChange={(checked) => onHideWonChange(checked as boolean)}
+                        />
+                        <Label htmlFor="hide-won">원 표시 제거</Label>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleExport}>
+                      <Download className="h-4 w-4 mr-2" />
+                      정산 내역 내보내기
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowImportDialog(true)}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      정산 내역 불러오기
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>설정</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>

@@ -26,6 +26,7 @@ function App() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [hideWon, setHideWon] = useState(false);
   const [hideDecimal, setHideDecimal] = useState(false);
+  const [title, setTitle] = useState("새 정산");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAddExpenseDialogOpen, setIsAddExpenseDialogOpen] = useState(false);
 
@@ -61,7 +62,8 @@ function App() {
     ));
   };
 
-  const handleImportData = (data: { participants: Participant[]; expenses: Expense[] }) => {
+  const handleImportData = (data: { title: string; participants: Participant[]; expenses: Expense[] }) => {
+    setTitle(data.title);
     setParticipants(data.participants);
     setExpenses(data.expenses);
   };
@@ -70,6 +72,8 @@ function App() {
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">더치페이 계산기</h1>
       <DutchPayTable
+        title={title}
+        onTitleChange={setTitle}
         participants={participants}
         expenses={expenses}
         hideWon={hideWon}
