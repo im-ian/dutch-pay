@@ -53,11 +53,11 @@ export function DutchPayTable({
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-[200px]">정산내역</TableHead>
-            <TableHead className="w-[150px]">금액</TableHead>
+          <TableRow className="bg-gray-100 hover:bg-gray-100">
+            <TableHead className="w-[200px] font-semibold">정산내역</TableHead>
+            <TableHead className="w-[150px] font-semibold">금액</TableHead>
             {participants.map((participant) => (
-              <TableHead key={participant.id}>{participant.name}</TableHead>
+              <TableHead key={participant.id} className="font-semibold">{participant.name}</TableHead>
             ))}
             <TableHead className="w-[50px]">
               <DropdownMenu>
