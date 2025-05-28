@@ -73,6 +73,7 @@ export function ImportDialog({
                   onChange={(e) => setImportData(e.target.value)}
                   placeholder="내보낸 정산 내역 데이터를 붙여넣으세요"
                   className="w-full h-32 p-2 border rounded-md font-mono text-sm"
+                  autoFocus
                 />
               </div>
               <p className="text-sm text-muted-foreground">
