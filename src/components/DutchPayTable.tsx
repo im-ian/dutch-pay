@@ -56,6 +56,7 @@ interface DutchPayTableProps {
   onDeleteParticipant: (id: string) => void;
   onUpdateParticipant: (id: string, newName: string) => void;
   onImportData: (data: { title: string; participants: Participant[]; expenses: Expense[] }) => void;
+  isSharedLink: boolean;
 }
 
 export function DutchPayTable({ 
@@ -73,6 +74,7 @@ export function DutchPayTable({
   onDeleteParticipant,
   onUpdateParticipant,
   onImportData,
+  isSharedLink,
 }: DutchPayTableProps) {
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
   const [participantToEdit, setParticipantToEdit] = useState<Participant | null>(null);
@@ -169,44 +171,49 @@ export function DutchPayTable({
             onChange={(e) => onTitleChange(e.target.value)}
             className="text-xl font-semibold bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none px-1 py-0.5"
             placeholder="정산 제목을 입력하세요"
+            readOnly={isSharedLink}
           />
         </div>
         <div className="flex space-x-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
-                  onClick={onAddExpense}
-                >
-                  <Banknote className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>정산 내용 추가</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {!isSharedLink && (
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                      onClick={onAddExpense}
+                    >
+                      <Banknote className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>정산 내용 추가</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
-                  onClick={onAddParticipant}
-                >
-                  <UserPlus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>참가자 추가</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                      onClick={onAddParticipant}
+                    >
+                      <UserPlus className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>참가자 추가</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
+          )}
 
           <TooltipProvider>
             <Tooltip>
@@ -242,14 +249,18 @@ export function DutchPayTable({
                         <Label htmlFor="hide-won">원 표시 제거</Label>
                       </div>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleExport}>
-                      <Download className="h-4 w-4 mr-2" />
-                      정산 내역 내보내기
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setShowImportDialog(true)}>
-                      <Upload className="h-4 w-4 mr-2" />
-                      정산 내역 불러오기
-                    </DropdownMenuItem>
+                    {!isSharedLink && (
+                      <>
+                        <DropdownMenuItem onClick={handleExport}>
+                          <Download className="h-4 w-4 mr-2" />
+                          정산 내역 내보내기
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setShowImportDialog(true)}>
+                          <Upload className="h-4 w-4 mr-2" />
+                          정산 내역 불러오기
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TooltipTrigger>
@@ -275,33 +286,35 @@ export function DutchPayTable({
                 >
                   <div className="flex items-center justify-end gap-2">
                     {participant.name}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-                        >
-                          <MoreHorizontal className="h-3 w-3" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setParticipantToEdit(participant);
-                          }}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          이름 변경
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setParticipantToDelete(participant)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          참가자 제거
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {!isSharedLink && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                          >
+                            <MoreHorizontal className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setParticipantToEdit(participant);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            이름 변경
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setParticipantToDelete(participant)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            참가자 제거
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                 </TableHead>
               ))}
@@ -319,14 +332,16 @@ export function DutchPayTable({
                 {expenses.map((expense) => (
                   <TableRow key={expense.id}>
                     <TableCell className="border-r">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
-                        onClick={() => handleDeleteClick(expense.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {!isSharedLink && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
+                          onClick={() => handleDeleteClick(expense.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </TableCell>
                     <TableCell className="border-r">{expense.description}</TableCell>
                     <TableCell className="border-r text-right">{formatAmount(expense.amount)}</TableCell>

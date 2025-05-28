@@ -30,6 +30,7 @@ function App() {
   const [title, setTitle] = useState("새 정산");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAddExpenseDialogOpen, setIsAddExpenseDialogOpen] = useState(false);
+  const [isSharedLink, setIsSharedLink] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -47,6 +48,7 @@ function App() {
         setTitle(data.title);
         setParticipants(data.participants);
         setExpenses(data.expenses);
+        setIsSharedLink(true);
         toast.success("정산 내역을 불러왔습니다");
       } catch (err) {
         toast.error("올바르지 않은 데이터입니다");
@@ -110,6 +112,7 @@ function App() {
         onDeleteParticipant={handleDeleteParticipant}
         onUpdateParticipant={handleUpdateParticipant}
         onImportData={handleImportData}
+        isSharedLink={isSharedLink}
       />
       <AddParticipantDialog
         open={isAddDialogOpen}
