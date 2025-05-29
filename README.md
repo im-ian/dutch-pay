@@ -18,6 +18,8 @@ https://github.com/user-attachments/assets/41d12ac9-9b4d-40eb-8982-928d1a288978
 - 참여자별 금액 입력 및 수정
 - 금액 차이에 대한 시각적 피드백
 - 반응형 디자인으로 모바일/데스크톱 지원
+- 내보내기/불러오기 지원
+- 공유 URL 지원
 - 다크 모드 지원
 
 ## 🛠️ Tech Stack
